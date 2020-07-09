@@ -1,16 +1,15 @@
 package seelog
 
 import (
+	"errors"
 	"fmt"
+	"github.com/xmge/seelog/page"
 	"golang.org/x/net/websocket"
 	"html/template"
 	"log"
 	"net/http"
-	"path"
-	"runtime"
 	"strings"
 	"time"
-	"errors"
 )
 
 const (
@@ -42,10 +41,8 @@ func server(port int, password string) {
 }
 
 // 输出page
-func showPage(writer http.ResponseWriter, page string, data interface{}) {
-	_, currentfile, _, _ := runtime.Caller(0) // 忽略错误
-	filename := path.Join(path.Dir(currentfile), page)
-	t, err := template.ParseFiles(filename)
+func showPage(writer http.ResponseWriter, pageName string, data interface{}) {
+	t, err := template.New(pageName).Parse(page.GetPage(pageName))
 	if err != nil {
 		printError(err)
 	}
