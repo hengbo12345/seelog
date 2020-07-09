@@ -2,9 +2,9 @@ package seelog
 
 import (
 	"encoding/json"
+	"errors"
 	"golang.org/x/net/websocket"
 	"io"
-	"errors"
 )
 
 //  websocket客户端

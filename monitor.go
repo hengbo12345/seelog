@@ -1,12 +1,12 @@
 package seelog
 
 import (
-	"github.com/hpcloud/tail"
-	"os"
 	"context"
-	"time"
 	"errors"
 	"fmt"
+	"github.com/hpcloud/tail"
+	"os"
+	"time"
 )
 
 type msg struct {
@@ -28,9 +28,9 @@ func monitor() {
 			// 等待文件
 			fileInfo, err := os.Stat(sl.Path)
 			if err != nil {
-				printInfo(fmt.Sprintf("等待文件 %s 生成",sl.Path))
-				ctx,_ := context.WithTimeout(context.Background(),time.Minute * 5)
-				fileInfo,err = BlockUntilExists(sl.Path,ctx)
+				printInfo(fmt.Sprintf("等待文件 %s 生成", sl.Path))
+				ctx, _ := context.WithTimeout(context.Background(), time.Minute*5)
+				fileInfo, err = BlockUntilExists(sl.Path, ctx)
 				if err != nil {
 					printError(err)
 					return
@@ -39,10 +39,13 @@ func monitor() {
 
 			printInfo(fmt.Sprintf("开始监控文件 %s", sl.Path))
 
-			t, _ := tail.TailFile(sl.Path, tail.Config{Follow: true, Location: &tail.SeekInfo{
-				Offset: fileInfo.Size(),
-				Whence: 0,
-			}})
+			t, err := tail.TailFile(sl.Path,
+				tail.Config{
+					Follow: true,
+					ReOpen: true,
+					Location: &tail.SeekInfo{Offset: fileInfo.Size(), Whence: 0},
+					Logger: tail.DiscardingLogger,
+				})
 
 			for line := range t.Lines {
 				manager.broadcast <- msg{sl.Name, line.Text}
@@ -52,19 +55,19 @@ func monitor() {
 
 }
 
-func BlockUntilExists(fileName string,ctx context.Context) (os.FileInfo, error) {
+func BlockUntilExists(fileName string, ctx context.Context) (os.FileInfo, error) {
 
 	for {
-		f,err := os.Stat(fileName)
+		f, err := os.Stat(fileName)
 		if err == nil {
-			return f,nil
+			return f, nil
 		}
 
 		select {
-		case <- time.After(time.Millisecond * 200):
+		case <-time.After(time.Millisecond * 200):
 			continue
-		case <- ctx.Done():
-			return nil,errors.New(fmt.Sprintf("等待 %s 超时",fileName))
+		case <-ctx.Done():
+			return nil, errors.New(fmt.Sprintf("等待 %s 超时", fileName))
 		}
 	}
 }

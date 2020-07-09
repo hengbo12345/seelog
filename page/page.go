@@ -11,7 +11,7 @@ import (
 var _pageMap = map[string]string{}
 
 func init()  {
-	_, currentFile, _, _ := runtime.Caller(0)
+	_, currentFile, _, _ := runtime.Caller(0) // ignore error
 	pageDir := path.Join(path.Dir(currentFile))
 	fmt.Println(pageDir)
 	box := packr.NewBox(pageDir)

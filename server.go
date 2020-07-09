@@ -17,7 +17,7 @@ const (
 	Page403   = "403.html"
 )
 
-// 开启 httpServer
+// start http server
 func server(port int, password string) {
 
 	defer func() {
@@ -26,10 +26,10 @@ func server(port int, password string) {
 		}
 	}()
 
-	// socket链接
+	// socket
 	http.Handle("/ws", websocket.Handler(genConn))
 
-	// 访问页面
+	// page
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		if !(strings.Replace(request.RequestURI, "/", "", -1) == password) {
 			showPage(writer, Page403, nil)
@@ -40,7 +40,7 @@ func server(port int, password string) {
 	log.Println(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
 
-// 输出page
+// response page
 func showPage(writer http.ResponseWriter, pageName string, data interface{}) {
 	t, err := template.New(pageName).Parse(page.GetPage(pageName))
 	if err != nil {
@@ -49,7 +49,7 @@ func showPage(writer http.ResponseWriter, pageName string, data interface{}) {
 	t.Execute(writer, data)
 }
 
-// 创建client对象
+// create client
 func genConn(ws *websocket.Conn) {
 	client := &client{time.Now().String(), ws, make(chan msg, 1024), slogs[0].Name}
 	manager.register <- client

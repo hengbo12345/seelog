@@ -12,26 +12,25 @@ type slog struct {
 
 var slogs = []slog{}
 
-
 // 启动seelog
-func See(name,path string) {
+func See(name, path string) {
 
 	if name == "" || path == "" {
 		printError(errors.New("log名称或者路径不可为空"))
 		return
 	}
 
-	for _,sl := range slogs {
+	for _, sl := range slogs {
 		if sl.Name == name {
-			printError(errors.New(fmt.Sprintf("log名称 %s 已存在,不可重复",name)))
+			printError(errors.New(fmt.Sprintf("log名称 %s 已存在,不可重复", name)))
 			return
 		}
 	}
-	slogs = append(slogs, slog{name,path})
+	slogs = append(slogs, slog{name, path})
 }
 
 // 开始监控
-func Serve(port int,password string)  {
+func Serve(port int, password string) {
 
 	if port < 0 || port > 65535 {
 		printError(errors.New("端口号不符合规范，port(0,65535)"))
@@ -49,5 +48,5 @@ func Serve(port int,password string)  {
 	go monitor()
 
 	// 开启httpServer
-	go server(port,password)
+	go server(port, password)
 }
