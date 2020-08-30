@@ -4,8 +4,6 @@ go 1.14
 
 require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
-	github.com/gobuffalo/packd v0.3.0
-	github.com/gobuffalo/packr v1.30.1
 	github.com/hpcloud/tail v1.0.0
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
