@@ -1,4 +1,4 @@
-module github.com/xmge/seelog
+module github.com/hengbo12345/seelog
 
 go 1.14
 
