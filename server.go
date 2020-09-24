@@ -3,12 +3,13 @@ package seelog
 import (
 	"errors"
 	"fmt"
-	"golang.org/x/net/websocket"
 	"html/template"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"golang.org/x/net/websocket"
 )
 
 // start http server
@@ -49,4 +50,16 @@ func genConn(ws *websocket.Conn) {
 	manager.register <- client
 	go client.read()
 	client.write()
+}
+
+// GetWsHandler return websocket handler for custom ws integration
+func GetWsHandler() http.Handler {
+	return websocket.Handler(genConn)
+}
+
+// GetPageHandler return web view page for log, based on websocket handler in path of ws
+func GetPageHandler() http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		showPage(writer, PageIndex, slogs)
+	})
 }

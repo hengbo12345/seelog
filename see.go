@@ -50,3 +50,16 @@ func Serve(port int, password string) {
 	// 开启httpServer
 	go server(port, password)
 }
+
+// 开始监控，不启动Http Handler
+func StartMonitor() {
+	if len(slogs) < 1 {
+		printError(errors.New("至少监听一个日志文件,请使用 seelog.See(name,path string)"))
+		return
+	}
+	// 开启socket管理器
+	go manager.start()
+
+	// 监控文件
+	go monitor()
+}
